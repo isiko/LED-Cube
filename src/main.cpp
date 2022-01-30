@@ -9,15 +9,7 @@
 
 // Animations
 #define animationCount 2
-Animation* animations[animationCount] = {new DirectLines(10, false), new Flash(4)};
-
-// Calculated Variables
-int msPerFrame = 1000/FPS;
-int msPerLayer = msPerFrame/zLen;
-
-// LED State
-bool standard[xLen][yLen][zLen] = {0};
-ledState currentStateTest = standard;
+Animation *animations[animationCount] = {new DirectLines(10, true), new Flash(4)};
 
 bool getVoxel(int x, int y, int z)
 {
@@ -26,7 +18,7 @@ bool getVoxel(int x, int y, int z)
 
 void updateVoxels(){
   randomSeed(analogRead(0));
-  ledState newState = animations[animation]->getState(keyFrame);
+  ledState newState = animations[currentAnimation]->getState(keyFrame);
 
   // Copy Values to other Array
   for (int x = 0; x < xLen; x++)
@@ -62,16 +54,16 @@ void loop()
     Serial.println(keyFrame);
     aFrame = 0;
     keyFrame++;
-    if (animations[animation]->done() == 1)
+    if (animations[currentAnimation]->done() == 1)
     {
-      Serial.println("Switching to Animation " + String(animation));
+      Serial.println("Switching to Animation " + String(currentAnimation));
 
-      animations[animation]->reset();
+      animations[currentAnimation]->reset();
       keyFrame = 0;
-      animation++;
+      currentAnimation++;
       
-      if (animation >= animationCount){
-        animation = 0;
+      if (currentAnimation >= animationCount){
+        currentAnimation = 0;
       }
     }
 
