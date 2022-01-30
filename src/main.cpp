@@ -1,67 +1,38 @@
 #include <Arduino.h>
-#define xLen 4
-#define yLen 4
-#define zLen 4 //height
 
-#define FPS 90
-#define framesPerKeyFrame 45
+#include <vars.h>
 
-#define animationCount 3
-
-// Pins
-const int latchInputPins[xLen]  = {9, 8, 7, 6};
-const int latchCpPins[yLen]     = {2, 3, 4, 5};
-const int transistorPins[zLen]  = {15, 14, 16, 10};
+#include <Animation.h>
+#include "test.h"
+#include "directLines.h"
+#include "flash.h"
 
 // Animations
-const int animationFrameCounts[animationCount] = {4, 7, 15};
-
-// Counters
-int keyFrame  = 0;  // Current KeyFrame
-int aFrame    = 0;  // Current Splitframe
-int animation = 0;  // Current Animation
+#define animationCount 2
+Animation* animations[animationCount] = {new DirectLines(10, false), new Flash(4)};
 
 // Calculated Variables
 int msPerFrame = 1000/FPS;
 int msPerLayer = msPerFrame/zLen;
 
 // LED State
-bool ledState[xLen][yLen][zLen];
+bool standard[xLen][yLen][zLen] = {0};
+ledState currentStateTest = standard;
 
 bool getVoxel(int x, int y, int z)
 {
-  return ledState[x][y][z];
+  return currentStateTest[x][y][z];
 }
 
 void updateVoxels(){
+  randomSeed(analogRead(0));
+  ledState newState = animations[animation]->getState(keyFrame);
+
+  // Copy Values to other Array
   for (int x = 0; x < xLen; x++)
     for (int y = 0; y < yLen; y++)
       for (int z = 0; z < zLen; z++)
-        switch (animation)
-        {
-          // Animation 0 - Blink all LEDs
-          case 0:
-            if(keyFrame == 0)
-              ledState[x][y][z] = 0;
-            else
-              ledState[x][y][z] = !ledState[x][y][z];
-            break;
-
-          // Animation 1 - Random Pattern
-          case 1:
-            ledState[x][y][z] = rand() & 1;
-            break;
-
-          // Animation 2 - Go through each Vertical Line of LEDs
-          case 2:
-            ledState[x][y][z] = ((x == keyFrame % xLen && y == keyFrame / yLen));
-            break;
-
-          // Turn of all LED's as a default
-          default:
-            ledState[x][y][z] = 0;
-            break;
-        }
+        currentStateTest[x][y][z] = newState[x][y][z];
 }
 
 void loop()
@@ -91,11 +62,14 @@ void loop()
     Serial.println(keyFrame);
     aFrame = 0;
     keyFrame++;
-    if (keyFrame > animationFrameCounts[animation])
+    if (animations[animation]->done() == 1)
     {
       Serial.println("Switching to Animation " + String(animation));
+
+      animations[animation]->reset();
       keyFrame = 0;
       animation++;
+      
       if (animation >= animationCount){
         animation = 0;
       }
