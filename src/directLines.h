@@ -13,7 +13,7 @@ class DirectLines : public Animation
         DirectLines(int targetAmount, bool pShowTraces){
             targets = targetAmount;
             showTrace = pShowTraces;
-            setRandomTarget();
+            reset();
         }
 
     private:
@@ -33,36 +33,26 @@ class DirectLines : public Animation
 
 void DirectLines::setRandomTarget()
 {
-    bool oldTarget[3] = {target[0], target[1], target[2]};
+    int oldTarget[3] = {target[0], target[1], target[2]};
 
-    do
-    {
+    do{
         target[0] = (xLen - 1) * random(2);
         target[1] = (yLen - 1) * random(2);
         target[2] = (zLen - 1) * random(2);
-    } while (
-        oldTarget[0] == target[0] &&
-        oldTarget[1] == target[1] &&
-        oldTarget[2] == target[2]
-    );
+    } while (oldTarget[0] == target[0] && oldTarget[1] == target[1] && oldTarget[2] == target[2]);
 }
 
 ledState DirectLines::getState(int keyFrame)
 {
-    for (int x = 0; x < xLen; x++)
-        for (int y = 0; y < yLen; y++)
-            for (int z = 0; z < zLen; z++)
-                state[x][y][z] = (z == current[0] && y == current[1] && x == current[2]) || (state[x][y][z] && showTrace);
-
     if (
         current[0] == target[0] &&
         current[1] == target[1] &&
         current[2] == target[2])
     {
+        Serial.println("Found Target (" + String(target[0]) + "|" + String(target[1]) + "|" + String(target[2]) + "|" + ")");
         setRandomTarget();
         targetCounter++;
     }
-    
 
     for (int i = 0; i < 3; i++)
     {
@@ -72,6 +62,11 @@ ledState DirectLines::getState(int keyFrame)
         if (current[i] < target[i])
             current[i]++;
     }
+
+    for (int x = 0; x < xLen; x++)
+        for (int y = 0; y < yLen; y++)
+            for (int z = 0; z < zLen; z++)
+                state[x][y][z] = (z == current[0] && y == current[1] && x == current[2]) || (state[x][y][z] && showTrace);
 
     return state;
 }
@@ -83,5 +78,7 @@ bool DirectLines::done(){
 void DirectLines::reset()
 {
     memset(state, 0, sizeof(state));
+    setRandomTarget();
+    // state[current[0]][current[1]][current[2]] = 1;
     targetCounter = 0;
 }
