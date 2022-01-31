@@ -6,15 +6,10 @@
 class DirectLines : public Animation
 {
     public:
-        virtual ledState getState(int keyFrame);
-        virtual bool done();
-        virtual void reset();
+        DirectLines(int targetAmount, bool pShowTraces);
 
-        DirectLines(int targetAmount, bool pShowTraces){
-            targets = targetAmount;
-            showTrace = pShowTraces;
-            reset();
-        }
+        ledState getState(int kFrame) override;
+        void reset() override;
 
     private:
         void setRandomTarget();
@@ -24,12 +19,14 @@ class DirectLines : public Animation
         int current[3] = {0, 0, 0};
         int target[3];
 
-        int targetCounter = 0;
-        int targets;
-
         bool showTrace = true;
 
 };
+
+DirectLines::DirectLines(int targetAmount, bool pShowTraces) : Animation(targetAmount) {
+    showTrace = pShowTraces;
+    setRandomTarget();
+}
 
 void DirectLines::setRandomTarget()
 {
@@ -42,7 +39,7 @@ void DirectLines::setRandomTarget()
     } while (oldTarget[0] == target[0] && oldTarget[1] == target[1] && oldTarget[2] == target[2]);
 }
 
-ledState DirectLines::getState(int keyFrame)
+ledState DirectLines::getState(int kFrame)
 {
     if (
         current[0] == target[0] &&
@@ -51,7 +48,7 @@ ledState DirectLines::getState(int keyFrame)
     {
         Serial.println("Found Target (" + String(target[0]) + "|" + String(target[1]) + "|" + String(target[2]) + "|" + ")");
         setRandomTarget();
-        targetCounter++;
+        iterations++;
     }
 
     for (int i = 0; i < 3; i++)
@@ -71,14 +68,8 @@ ledState DirectLines::getState(int keyFrame)
     return state;
 }
 
-bool DirectLines::done(){
-    return targetCounter > targets;
-}
-
 void DirectLines::reset()
 {
     memset(state, 0, sizeof(state));
     setRandomTarget();
-    // state[current[0]][current[1]][current[2]] = 1;
-    targetCounter = 0;
 }

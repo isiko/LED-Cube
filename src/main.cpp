@@ -48,11 +48,11 @@ void loop()
   }
 
   // Progressing through the Animation
-  aFrame++;
-  if (aFrame >= framesPerKeyFrame)
+  splitFrame++;
+  if (splitFrame >= framesPerKeyFrame)
   {
     Serial.println(keyFrame);
-    aFrame = 0;
+    splitFrame = 0;
     keyFrame++;
     if (animations[currentAnimation]->done() == 1)
     {

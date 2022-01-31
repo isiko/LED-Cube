@@ -3,38 +3,30 @@
 #include <Arduino.h>
 #include <Animation.h>
 
-class Test : public Animation
-{
+class Test : public Animation {
 public:
-    virtual ledState getState(int kFrame);
-    virtual bool done();
-    virtual void reset();
+    explicit Test();
 
-    int frameCounter = 0;
+    ledState getState(int kFrame) override;
 };
 
-ledState Test::getState(int keyFrame)
-{
+Test::Test() : Animation(xLen * yLen * zLen) {
+
+}
+
+ledState Test::getState(int kFrame) {
     static bool state[xLen][yLen][zLen] = {0};
 
     for (int x = 0; x < xLen; x++)
         for (int y = 0; y < yLen; y++)
             for (int z = 0; z < zLen; z++)
                 state[x][y][z] = (
-                    x == (keyFrame % (xLen * yLen)) % xLen &&
-                    y == (keyFrame % (xLen * yLen)) / yLen &&
-                    z == keyFrame / (xLen * yLen)
+                        x == (keyFrame % (xLen * yLen)) % xLen &&
+                        y == (keyFrame % (xLen * yLen)) / yLen &&
+                        z == keyFrame / (xLen * yLen)
                 );
 
-    frameCounter++;
+    iterations++;
 
     return state;
-}
-
-bool Test::done(){
-    return frameCounter >= xLen * yLen * zLen;
-}
-
-void Test::reset(){
-    frameCounter = 0;
 }

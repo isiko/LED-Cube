@@ -17,7 +17,7 @@ int msPerLayer = msPerFrame / zLen;
 
 // Variables and Counters
 int keyFrame = 0;  // Current KeyFrame
-int aFrame = 0;    // Current Splitframe
+int splitFrame = 0;    // Current Splitframe
 int currentAnimation = 0; // Current Animation
 
 // LED State

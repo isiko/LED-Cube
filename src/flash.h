@@ -5,43 +5,36 @@
 
 class Flash : public Animation
 {
-    public:
-        int iterations = 0;
-        int maxIterations;
-        bool isOn = false;
+public:
+    explicit Flash(int maxI);
 
-        virtual ledState getState(int keyFrame);
-        virtual bool done();
-        virtual void reset();
+    ledState getState(int kFrame) override;
+    void reset() override;
 
-        Flash(int flashAmount)
-        {
-            maxIterations = flashAmount;
-        }
+protected:
+    bool isOn;
 };
 
-ledState Flash::getState(int keyFrame)
+Flash::Flash(int maxI) : Animation(maxI) {
+    isOn = false;
+}
+
+ledState Flash::getState(int kFrame)
 {
     isOn = !isOn;
 
-    static bool state[xLen][yLen][zLen] = {0};
-    for (int x = 0; x < xLen; x++)
-        for (int y = 0; y < yLen; y++)
-            for (int z = 0; z < zLen; z++)
-                state[x][y][z] = isOn;
+    static bool state[xLen][yLen][zLen] = {false};
+    for (auto & x : state)
+        for (auto & y : x)
+            for (bool & z : y)
+                z = isOn;
 
     if (!isOn)
     {
         iterations++;
     }
-    
 
     return state;
-}
-
-bool Flash::done()
-{
-    return iterations >= maxIterations;
 }
 
 void Flash::reset()
