@@ -70,6 +70,7 @@ ledState DirectLines::getState(int kFrame)
 
 void DirectLines::reset()
 {
+    iterations = 0;
     memset(state, 0, sizeof(state));
     setRandomTarget();
 }
