@@ -8,6 +8,7 @@ public:
     explicit Layers(bool pX, bool pY, bool pZ);
 
     ledState getState(int kFrame) override;
+
     void reset() override;
 
 private:
@@ -36,7 +37,7 @@ ledState Layers::getState(int kFrame) {
 
     iterations++;
 
-    for (int i = 0; i <3; ++i)
+    for (int i = 0; i < 3; ++i)
         counters[i] += showAxies[i];
 
     return state;
