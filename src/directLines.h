@@ -5,7 +5,7 @@
 
 class DirectLines : public Animation {
 public:
-    DirectLines(int targetAmount, bool pShowTraces);
+    DirectLines(int targetAmount, int lifeSpan);
 
     ledState getState(int kFrame) override;
 
@@ -15,17 +15,17 @@ private:
     void setRandomTarget();
 
     bool state[xLen][yLen][zLen];
+    int lifeTime[xLen][yLen][zLen] = {{{0}}};
 
     int current[3] = {0, 0, 0};
     int target[3];
 
-    bool showTrace = true;
+    int defaultLifeSpan;
 
 };
 
-DirectLines::DirectLines(int targetAmount, bool pShowTraces) : Animation(targetAmount) {
-
-    showTrace = pShowTraces;
+DirectLines::DirectLines(int targetAmount, int lifeSpan) : Animation(targetAmount) {
+    defaultLifeSpan = lifeSpan;
     setRandomTarget();
 }
 
@@ -43,8 +43,12 @@ ledState DirectLines::getState(int kFrame) {
 
     for (int x = 0; x < xLen; x++)
         for (int y = 0; y < yLen; y++)
-            for (int z = 0; z < zLen; z++)
-                state[x][y][z] = (x == current[0] && y == current[1] && z == current[2]) || (state[x][y][z] && showTrace);
+            for (int z = 0; z < zLen; z++) {
+                lifeTime[x][y][z]--;
+                if(x == current[0] && y == current[1] && z == current[2])
+                    lifeTime[x][y][z] = defaultLifeSpan;
+                state[x][y][z] = lifeTime[x][y][z] > 0;
+            }
 
     if (current[0] == target[0] && current[1] == target[1] && current[2] == target[2]) {
         Serial.println("Found Target (" + String(target[0]) + "|" + String(target[1]) + "|" + String(target[2]) + "|" + ")");
@@ -66,6 +70,7 @@ ledState DirectLines::getState(int kFrame) {
 void DirectLines::reset() {
     iterations = 0;
     memset(state, 0, sizeof(state));
+    memset(lifeTime, 0, sizeof(lifeTime));
 
     // Set random Target and set the current pointer there to get a random Corner
     setRandomTarget();
