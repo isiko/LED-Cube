@@ -11,7 +11,7 @@ const int transistorPins[zLen] = {15, 14, 16, 10};
 
 //Framerate Related Values
 #define FPS 90
-#define framesPerKeyFrame 10
+#define framesPerKeyFrame 45
 int msPerFrame = 1000 / FPS;
 int msPerLayer = msPerFrame / zLen;
 
@@ -21,8 +21,20 @@ int splitFrame = 0;    // Current Splitframe
 int currentAnimation = 0; // Current Animation
 
 // LED State
-bool standard[xLen][yLen][zLen] = {0};
+bool standard[xLen][yLen][zLen] = {{{false}}};
 typedef bool (&ledState)[xLen][yLen][zLen];
 ledState currentStateTest = standard;
+
+//Including Animation Classes
+#include <Animation.h>
+#include "test.h"
+#include "directLines.h"
+#include "flash.h"
+
+// Animations
+#define animationCount 1
+Animation *animations[animationCount] = {
+        new DirectLines(1, false)
+};
 
 #endif

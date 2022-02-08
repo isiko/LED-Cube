@@ -1,20 +1,5 @@
 #include <Arduino.h>
-
 #include <vars.h>
-
-#include <Animation.h>
-#include "test.h"
-#include "directLines.h"
-#include "flash.h"
-
-// Animations
-#define animationCount 2
-Animation *animations[animationCount] = {new DirectLines(10, true), new Flash(4)};
-
-bool getVoxel(int x, int y, int z)
-{
-  return currentStateTest[x][y][z];
-}
 
 void updateVoxels(){
   randomSeed(analogRead(0));
@@ -37,7 +22,7 @@ void loop()
       digitalWrite(latchCpPins[y],LOW);
       for (int x = 0; x < xLen; x++) //LEDs
       {
-        digitalWrite(latchInputPins[x], getVoxel(x,y,z));
+        digitalWrite(latchInputPins[x], currentStateTest[x][y][z]);
       }
       digitalWrite(latchCpPins[y], HIGH);
       digitalWrite(latchCpPins[y], LOW);
@@ -76,14 +61,14 @@ void setup()
   Serial.begin(9600);
 
   //Set all Latch Input Pins to Low
-  for (int z = 0; z < zLen; z++)
-    digitalWrite(latchInputPins[z], LOW);
+  for (int latchInputPin : latchInputPins)
+    digitalWrite(latchInputPin, LOW);
 
   //Set all Copy Pins to Low
-  for (int y = 0; y < yLen; y++)
-    digitalWrite(latchCpPins[y], LOW);
+  for (int latchCpPin : latchCpPins)
+    digitalWrite(latchCpPin, LOW);
 
   //Set all Transistors to Low
-  for (int x = 0; x < xLen; x++)
-    digitalWrite(transistorPins[x], LOW);
+  for (int transistorPin : transistorPins)
+    digitalWrite(transistorPin, LOW);
 }

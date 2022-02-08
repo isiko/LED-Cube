@@ -1,7 +1,7 @@
 // Puts on all LEDs one by one
 
 #include <Arduino.h>
-#include <Animation.h>
+#include "Animation.h"
 
 class Test : public Animation {
 public:
