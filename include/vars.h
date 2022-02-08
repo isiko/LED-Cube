@@ -30,6 +30,7 @@ ledState currentStateTest = standard;
 #include "test.h"
 #include "directLines.h"
 #include "flash.h"
+#include "layers.h"
 
 // Animations
 #define animationCount 1
