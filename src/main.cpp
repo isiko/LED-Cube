@@ -40,7 +40,6 @@ void loop() {
         if (animations[currentAnimation]->done() == 1) {
             Serial.println("Switching to Animation " + String(currentAnimation));
 
-            animations[currentAnimation]->reset();
             keyFrame = 0;
             currentAnimation++;
 

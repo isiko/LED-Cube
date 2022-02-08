@@ -26,7 +26,11 @@ void Animation::reset() {
 }
 
 bool Animation::done() {
-    return iterations >= maxIterations;
+    if(iterations >= maxIterations && maxIterations > 0) {
+        reset();
+        return true;
+    }
+    return false;
 }
 
 #endif
