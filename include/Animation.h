@@ -14,6 +14,7 @@ public:
 protected:
     int iterations;
     int maxIterations;
+    bool isDone = false;
 };
 
 Animation::Animation(int maxI) {
@@ -23,10 +24,11 @@ Animation::Animation(int maxI) {
 
 void Animation::reset() {
     iterations = 0;
+    isDone = false;
 }
 
 bool Animation::done() {
-    if(iterations >= maxIterations && maxIterations > 0) {
+    if((iterations >= maxIterations && maxIterations > 0) || isDone) {
         reset();
         return true;
     }

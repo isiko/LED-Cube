@@ -11,7 +11,7 @@ const int transistorPins[zLen] = {15, 14, 16, 10};
 
 //Framerate Related Values
 #define FPS 90
-#define framesPerKeyFrame 45
+#define framesPerKeyFrame 20
 int msPerFrame = 1000 / FPS;
 int msPerLayer = msPerFrame / zLen;
 
@@ -31,6 +31,7 @@ ledState currentStateTest = standard;
 #include "directLines.h"
 #include "flash.h"
 #include "layers.h"
+#include "gameOfLife.h"
 
 // Animations
 #define animationCount 1
